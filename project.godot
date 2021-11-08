@@ -17,7 +17,7 @@ config/icon="res://icon.png"
 [autoload]
 
 CaseData="*res://Singletons/Case_data.gd"
-PieceData="*res://Singletons/Piece_data.gd"
+BaseData="*res://Singletons/Base_data.gd"
 
 [display]
 

@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://tempo/Plateau_sombre.png" type="Texture" id=1]
+[ext_resource path="res://Assets/Plateau_sombre.png" type="Texture" id=1]
 [ext_resource path="res://Scripts/Game.gd" type="Script" id=2]
 [ext_resource path="res://Scenes/Player.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scripts/Bleu.gd" type="Script" id=4]
+[ext_resource path="res://Scripts/Jaune.gd" type="Script" id=5]
+[ext_resource path="res://Scripts/Rouge.gd" type="Script" id=6]
+[ext_resource path="res://Scripts/Vert.gd" type="Script" id=7]
 
 [node name="Game" type="Node"]
 script = ExtResource( 2 )
@@ -16,13 +20,70 @@ texture = ExtResource( 1 )
 
 [node name="Players" type="Node" parent="."]
 
-[node name="Jaune" type="Node" parent="Players"]
+[node name="Jaune" type="Node" parent="Players" groups=[
+"J",
+]]
+script = ExtResource( 5 )
 
-[node name="Player" parent="Players/Jaune" instance=ExtResource( 3 )]
-position = Vector2( 278.647, 494.955 )
+[node name="J1" parent="Players/Jaune" instance=ExtResource( 3 )]
+position = Vector2( 424, 432 )
 
-[node name="Vert" type="Node" parent="Players"]
+[node name="J2" parent="Players/Jaune" instance=ExtResource( 3 )]
+position = Vector2( 488, 432 )
 
-[node name="Rouge" type="Node" parent="Players"]
+[node name="J3" parent="Players/Jaune" instance=ExtResource( 3 )]
+position = Vector2( 424, 504 )
 
-[node name="Bleu" type="Node" parent="Players"]
+[node name="J4" parent="Players/Jaune" instance=ExtResource( 3 )]
+position = Vector2( 488, 504 )
+
+[node name="Vert" type="Node" parent="Players" groups=[
+"V",
+]]
+script = ExtResource( 7 )
+
+[node name="V1" parent="Players/Vert" instance=ExtResource( 3 )]
+position = Vector2( 104, 432 )
+
+[node name="V2" parent="Players/Vert" instance=ExtResource( 3 )]
+position = Vector2( 168, 432 )
+
+[node name="V3" parent="Players/Vert" instance=ExtResource( 3 )]
+position = Vector2( 104, 504 )
+
+[node name="V4" parent="Players/Vert" instance=ExtResource( 3 )]
+position = Vector2( 168, 504 )
+
+[node name="Rouge" type="Node" parent="Players" groups=[
+"R",
+]]
+script = ExtResource( 6 )
+
+[node name="R1" parent="Players/Rouge" instance=ExtResource( 3 )]
+position = Vector2( 104, 112 )
+
+[node name="R2" parent="Players/Rouge" instance=ExtResource( 3 )]
+position = Vector2( 168, 112 )
+
+[node name="R3" parent="Players/Rouge" instance=ExtResource( 3 )]
+position = Vector2( 104, 176 )
+
+[node name="R4" parent="Players/Rouge" instance=ExtResource( 3 )]
+position = Vector2( 168, 176 )
+
+[node name="Bleu" type="Node" parent="Players" groups=[
+"B",
+]]
+script = ExtResource( 4 )
+
+[node name="B1" parent="Players/Bleu" instance=ExtResource( 3 )]
+position = Vector2( 424, 112 )
+
+[node name="B2" parent="Players/Bleu" instance=ExtResource( 3 )]
+position = Vector2( 488, 112 )
+
+[node name="B3" parent="Players/Bleu" instance=ExtResource( 3 )]
+position = Vector2( 424, 176 )
+
+[node name="B4" parent="Players/Bleu" instance=ExtResource( 3 )]
+position = Vector2( 488, 176 )

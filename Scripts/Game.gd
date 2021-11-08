@@ -1,40 +1,62 @@
 extends Node
 
-
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-onready var J = $Players/Jaune/Player
+################################################
+#################### SCENES #################### 
 onready var Player = preload("res://Scenes/Player.tscn")
-var new_player
-var v = Vector2.ZERO
+
+
+##################################################
+#################### TEXTURES ####################
+var J_texture = load("res://Assets/Jaune.png")
+var V_texture = load("res://Assets/Vert.png")
+var R_texture = load("res://Assets/Rouge.png")
+var B_texture = load("res://Assets/Bleu.png")
+
+
+###############################################
+#################### NODES ####################
+onready var Players = get_node("Players")
+
+
+
+####################################################
+#################### VARIABLESS ####################
+var nouv_player
+
 
 var x
 var y
+
 func _ready():
-	for e in CaseData.case_data:
-		print(CaseData.case_data[e]['x'])
-		x = CaseData.case_data[e]['x']
-		y = CaseData.case_data[e]['y']
-		v = Vector2(x,y)
-		J.set_position(v)
-		var t = Timer.new()
-		t.set_wait_time(.5)
-		t.set_one_shot(true)
-		self.add_child(t)
-		t.start()
-		yield(t, "timeout")
-		t.queue_free()
-
-var a = 23
-func _on_Jaune2_input_event(viewport, event, shape_idx):
-	if Input.is_action_pressed("click_"):
-		J.position += (Vector2(a, 0))
-		print(J.position.x)
-		#a += 23.2
+	instance_texture_players()
+	for p in Players.get_children():
+		for pp in p.get_children():
+			if (pp.name == "V4"):
+				pp.depart()
+				pp.avancer(6)
 
 
+#func tour():
+	
 
-
-#	
-#
+func instance_texture_players():
+	var t
+	t = get_node("Players/Jaune").get_children()
+	for p in t:
+		p.get_node("Sprite").set_texture(J_texture)
+	t = get_node("Players/Vert").get_children()
+	for p in t:
+		p.get_node("Sprite").set_texture(V_texture)
+	t = get_node("Players/Rouge").get_children()
+	for p in t:
+		p.get_node("Sprite").set_texture(R_texture)
+	t = get_node("Players/Bleu").get_children()
+	for p in t:
+		p.get_node("Sprite").set_texture(B_texture)
+	
+#var a = 23
+#func _on_Jaune2_input_event(viewport, event, shape_idx):
+#	if Input.is_action_pressed("click_"):
+#		J.position += (Vector2(a, 0))
+#		print(J.position.x)
+#		#a += 23.2
