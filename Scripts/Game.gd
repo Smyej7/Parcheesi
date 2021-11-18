@@ -73,5 +73,5 @@ func _on_Button2_pressed():
 
 
 func _on_test_button_pressed():
-	print("Item1 : ", CaseData.case_data["Case8"]["Item1"])
-	print("Item2 : ", CaseData.case_data["Case8"]["Item2"])
+	print("Item1 : ", CaseData.case_data["Case65"]["Item1"])
+	print("Item2 : ", CaseData.case_data["Case65"]["Item2"])

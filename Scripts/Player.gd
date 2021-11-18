@@ -31,6 +31,9 @@ func depart():
 		go_to(case_pos)
 		in_base = false
 
+var temp_name1
+var temp_name2
+
 func go_to(pos_):
 	var temp_name
 	#supprimer la val depuis la case precedente
@@ -38,11 +41,13 @@ func go_to(pos_):
 		CaseData.case_data["Case" + str(c_pos)]["Item1"] = "0"
 		temp_name = CaseData.case_data["Case" + str(c_pos)]["Item2"]
 		if (temp_name != "0"):
+			CaseData.case_data["Case" + str(c_pos)]["Item1"] = CaseData.case_data["Case" + str(c_pos)]["Item2"]
+			temp_name = CaseData.case_data["Case" + str(c_pos)]["Item1"]
 			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(c_pos)]["x"], CaseData.case_data["Case" + str(c_pos)]["y"])
 	else:
 		CaseData.case_data["Case" + str(c_pos)]["Item2"] = "0"
 		temp_name = CaseData.case_data["Case" + str(c_pos)]["Item1"]
-		if (temp_name != "0"):
+		if (temp_name != "0"):# pas vrmnt besoin de ce test
 			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(c_pos)]["x"], CaseData.case_data["Case" + str(c_pos)]["y"])
 		
 	if (pos_ == 108 || pos_ == 208 || pos_ == 308 || pos_ == 408):
@@ -58,21 +63,32 @@ func go_to(pos_):
 		
 		if (CaseData.case_data["Case" + str(pos_)]["Item1"] == "0"):
 			CaseData.case_data["Case" + str(pos_)]["Item1"] = self.name
+			print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 		else:
 			CaseData.case_data["Case" + str(pos_)]["Item2"] = self.name
-			temp_name = CaseData.case_data["Case" + str(case_pos)]["Item1"]
-			print("temp_name : ", temp_name)
-			print("case_pos : ", case_pos)
-			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(case_pos)]["x"]-11, CaseData.case_data["Case" + str(case_pos)]["y"])
-			temp_name = CaseData.case_data["Case" + str(case_pos)]["Item2"]
-			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(case_pos)]["x"]+11, CaseData.case_data["Case" + str(case_pos)]["y"])
+			temp_name1 = CaseData.case_data["Case" + str(case_pos)]["Item1"]
+			temp_name2 = CaseData.case_data["Case" + str(case_pos)]["Item2"]
+			rect_pos(case_pos)
+#			Game_node.get_node("Players").get_node(str(temp_name1[0])).get_node(str(temp_name1)).position = Vector2(CaseData.case_data["Case" + str(case_pos)]["x"]-11, CaseData.case_data["Case" + str(case_pos)]["y"])
+#
+#			Game_node.get_node("Players").get_node(str(temp_name2[0])).get_node(str(temp_name2)).position = Vector2(CaseData.case_data["Case" + str(case_pos)]["x"]+11, CaseData.case_data["Case" + str(case_pos)]["y"])
 	print("land on Case ", pos_)
 	print("Item1 : ", CaseData.case_data["Case" + str(pos_)]["Item1"])
 	print("Item2 : ", CaseData.case_data["Case" + str(pos_)]["Item2"])
 
-#func rect_pos(var vect, var dep, var arr):
-#	if (dep != 0):
-#
+func rect_pos(var p):
+	var vect = Vector2(CaseData.case_data["Case" + str(p)]["x"], CaseData.case_data["Case" + str(p)]["y"])
+	if (p >= 60 && p <= 68) || (p >= 1 && p <= 8) || (p >= 26 && p <= 42) || (p >= 101 && p <= 107) || (p >= 301 && p <= 307):
+		Game_node.get_node("Players").get_node(str(temp_name1[0])).get_node(str(temp_name1)).position = vect + Vector2(-11, 0)
+		Game_node.get_node("Players").get_node(str(temp_name2[0])).get_node(str(temp_name2)).position = vect + Vector2(+11, 0)
+		print("pos rectifiée pour ( " , temp_name1, " ) && ( " , temp_name2, " )")
+	elif (p >= 9 && p <= 25) || (p >= 43 && p <= 59) || (p >= 201 && p <= 207) || (p >= 401 && p <= 407):
+		Game_node.get_node("Players").get_node(str(temp_name1[0])).get_node(str(temp_name1)).position = vect + Vector2(0, +11)
+		Game_node.get_node("Players").get_node(str(temp_name2[0])).get_node(str(temp_name2)).position = vect + Vector2(0, -11)
+		print("pos rectifiée pour ( " , temp_name1, " ) && ( " , temp_name2, " )")
+	else:
+		print("-------------------------------------------------------")
+
 
 func from_to(var from,to):
 	var Item1
@@ -155,3 +171,5 @@ func _on_Player_input_event(viewport, event, shape_idx):
 			depart()
 		else:
 			avancer(6)
+	elif Input.is_action_just_pressed("test_click"):
+		print("case_pos /// ", case_pos)
