@@ -29,11 +29,13 @@ var y
 
 func _ready():
 	instance_texture_players()
-	for p in Players.get_children():
-		for pp in p.get_children():
-			if (pp.name == "J4"):
-				pp.depart()
-				pp.avancer(6)
+#	for p in Players.get_children():
+#		for pp in p.get_children():
+#			if (pp.name == "J4"):
+#				pp.depart()
+#				pp.avancer(6)
+	
+	
 
 
 #func tour():
@@ -41,16 +43,16 @@ func _ready():
 
 func instance_texture_players():
 	var t
-	t = get_node("Players/Jaune").get_children()
+	t = get_node("Players/J").get_children()
 	for p in t:
 		p.get_node("Sprite").set_texture(J_texture)
-	t = get_node("Players/Vert").get_children()
+	t = get_node("Players/V").get_children()
 	for p in t:
 		p.get_node("Sprite").set_texture(V_texture)
-	t = get_node("Players/Rouge").get_children()
+	t = get_node("Players/R").get_children()
 	for p in t:
 		p.get_node("Sprite").set_texture(R_texture)
-	t = get_node("Players/Bleu").get_children()
+	t = get_node("Players/B").get_children()
 	for p in t:
 		p.get_node("Sprite").set_texture(B_texture)
 	
@@ -68,3 +70,8 @@ func _on_Button_pressed():
 
 func _on_Button2_pressed():
 	print("button2 pressed")
+
+
+func _on_test_button_pressed():
+	print("Item1 : ", CaseData.case_data["Case8"]["Item1"])
+	print("Item2 : ", CaseData.case_data["Case8"]["Item2"])

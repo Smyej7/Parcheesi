@@ -7,26 +7,45 @@ onready var p_dep = get_parent().point_dep
 onready var Game_node = get_parent().get_parent().get_parent()
 onready var Parent_node = get_parent()
 
+
 var x
 var y
 
 var in_base = true
 
 func _ready():
+#	case_pos = p_dep
 	pass
 
 func depart():
-	case_pos = p_dep
-	go_to(case_pos)
-	in_base = false
+	var name0 = self.name
+	
+	if(from_to(p_dep-1, p_dep)):
+		BaseData.base_data["Base_" + name0[0]]["Pos" + name0[1]]["val"] = 0
+#		if (CaseData.case_data["Case" + str(p_dep)]["Item1"] == "0"):
+#			CaseData.case_data["Case" + str(p_dep)]["Item1"] = self.name
+#		else:
+#			CaseData.case_data["Case" + str(p_dep)]["Item1"] = self.name
+		case_pos = p_dep
+		c_pos = case_pos
+		go_to(case_pos)
+		in_base = false
 
 func go_to(pos_):
+	var temp_name
+	#supprimer la val depuis la case precedente
+	if(CaseData.case_data["Case" + str(c_pos)]["Item1"] == self.name):
+		CaseData.case_data["Case" + str(c_pos)]["Item1"] = "0"
+		temp_name = CaseData.case_data["Case" + str(c_pos)]["Item2"]
+		if (temp_name != "0"):
+			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(c_pos)]["x"], CaseData.case_data["Case" + str(c_pos)]["y"])
+	else:
+		CaseData.case_data["Case" + str(c_pos)]["Item2"] = "0"
+		temp_name = CaseData.case_data["Case" + str(c_pos)]["Item1"]
+		if (temp_name != "0"):
+			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(c_pos)]["x"], CaseData.case_data["Case" + str(c_pos)]["y"])
+		
 	if (pos_ == 108 || pos_ == 208 || pos_ == 308 || pos_ == 408):
-		#supprimer la val depuis la case precedente
-		if(CaseData.case_data["Case" + str(c_pos)]["Item1"] == self.name):
-			CaseData.case_data["Case" + str(c_pos)]["Item1"] = "0"
-		else:
-			CaseData.case_data["Case" + str(c_pos)]["Item2"] = "0"
 		for i in range(1,5):
 			if (CaseData.case_data["Case" + str(pos_)]["Item" + str(5-i)] == "0"):
 				CaseData.case_data["Case" + str(pos_)]["Item" + str(5-i)] = self.name
@@ -36,16 +55,33 @@ func go_to(pos_):
 		y = CaseData.case_data["Case" + str(pos_)]["y"]
 		vect_pos = Vector2(x, y)
 		position = vect_pos
+		
+		if (CaseData.case_data["Case" + str(pos_)]["Item1"] == "0"):
+			CaseData.case_data["Case" + str(pos_)]["Item1"] = self.name
+		else:
+			CaseData.case_data["Case" + str(pos_)]["Item2"] = self.name
+			temp_name = CaseData.case_data["Case" + str(case_pos)]["Item1"]
+			print("temp_name : ", temp_name)
+			print("case_pos : ", case_pos)
+			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(case_pos)]["x"]-11, CaseData.case_data["Case" + str(case_pos)]["y"])
+			temp_name = CaseData.case_data["Case" + str(case_pos)]["Item2"]
+			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(case_pos)]["x"]+11, CaseData.case_data["Case" + str(case_pos)]["y"])
 	print("land on Case ", pos_)
+	print("Item1 : ", CaseData.case_data["Case" + str(pos_)]["Item1"])
+	print("Item2 : ", CaseData.case_data["Case" + str(pos_)]["Item2"])
+
+#func rect_pos(var vect, var dep, var arr):
+#	if (dep != 0):
+#
 
 func from_to(var from,to):
-	var mouve_valide = false
 	var Item1
 	var Item2
 	for i in range(from+1, to+1):
 		Item1 = CaseData.case_data["Case" + str(i)]["Item1"]
 		Item2 = CaseData.case_data["Case" + str(i)]["Item2"]
 		if ( Item1 != "0" &&  Item2 != "0"):
+			print("from to false hh")
 			return false
 	
 	return true
@@ -108,6 +144,10 @@ func avancer(nbr):
 				case_pos = next_pos
 				go_to(case_pos)
 
+func kill(var target):
+	BaseData.base_data["Base_" + BaseData.piece_info[str(int(target[1])-1)]]["Pos" + target[1]]["val"] = 1
+	
+#	CaseData.case_data["Case" + case_pos]["Item" + target[1]] = Parent_node.i
 
 func _on_Player_input_event(viewport, event, shape_idx):
 	if Input.is_action_just_pressed("click_"):
