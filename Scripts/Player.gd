@@ -35,6 +35,8 @@ var temp_name1
 var temp_name2
 
 func go_to(pos_):
+	print("pos_ : ", pos_)
+	case_pos = pos_
 	var temp_name
 	#supprimer la val depuis la case precedente
 	if(CaseData.case_data["Case" + str(c_pos)]["Item1"] == self.name):
@@ -42,6 +44,7 @@ func go_to(pos_):
 		temp_name = CaseData.case_data["Case" + str(c_pos)]["Item2"]
 		if (temp_name != "0"):
 			CaseData.case_data["Case" + str(c_pos)]["Item1"] = CaseData.case_data["Case" + str(c_pos)]["Item2"]
+			CaseData.case_data["Case" + str(c_pos)]["Item2"] = "0"
 			temp_name = CaseData.case_data["Case" + str(c_pos)]["Item1"]
 			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(c_pos)]["x"], CaseData.case_data["Case" + str(c_pos)]["y"])
 	else:
@@ -51,9 +54,16 @@ func go_to(pos_):
 			Game_node.get_node("Players").get_node(str(temp_name[0])).get_node(str(temp_name)).position = Vector2(CaseData.case_data["Case" + str(c_pos)]["x"], CaseData.case_data["Case" + str(c_pos)]["y"])
 		
 	if (pos_ == 108 || pos_ == 208 || pos_ == 308 || pos_ == 408):
+		
+		if (CaseData.case_data["Case" + str(c_pos)]["Item1"] == self.name):
+			CaseData.case_data["Case" + str(c_pos)]["Item1"] = "0"
+		else:
+			CaseData.case_data["Case" + str(c_pos)]["Item2"] = "0"
+			
 		for i in range(1,5):
 			if (CaseData.case_data["Case" + str(pos_)]["Item" + str(5-i)] == "0"):
 				CaseData.case_data["Case" + str(pos_)]["Item" + str(5-i)] = self.name
+				Game_node.get_node("Players").get_node(self.name[0]).get_node(self.name).position = Vector2(CaseData.case_data["Case" + str(pos_)]["x" + str(5-i)], CaseData.case_data["Case" + str(pos_)]["y" + str(5-i)])
 				return
 	else:
 		x = CaseData.case_data["Case" + str(pos_)]["x"]
@@ -97,6 +107,7 @@ func from_to(var from,to):
 		Item1 = CaseData.case_data["Case" + str(i)]["Item1"]
 		Item2 = CaseData.case_data["Case" + str(i)]["Item2"]
 		if ( Item1 != "0" &&  Item2 != "0"):
+			print("a cause de la case ", i)
 			print("from to false hh")
 			return false
 	
@@ -107,58 +118,138 @@ func avancer(nbr):
 	c_pos = case_pos
 	
 	if (Parent_node.is_in_group("J")):
-		if (case_pos > 100 && next_pos > 108):
-			print("select another dice")
-		elif (next_pos > 68 && case_pos <= 68):
-			case_pos = 100 + next_pos - 68
+		if (case_pos < 68 && next_pos <= 68):# mn bra l bra
 			if (from_to(case_pos, next_pos)):
-				go_to(case_pos)
-		else:
-			if (from_to(case_pos, next_pos)):
-				case_pos = next_pos
-				go_to(case_pos)
-		
+				go_to(next_pos)
+		elif (case_pos <= 68 && next_pos > 68):# mn bra l dakhel
+			next_pos = 100 + next_pos - 68
+			if (from_to(case_pos, 68)):# lpiste li bra wach clean
+				if (from_to(100, next_pos)):# lpiste li ldakhel wach clean
+					go_to(next_pos)
+		elif (case_pos >= 101 && next_pos <= 108):# mn ldakhel l ldakhel
+			if (from_to(case_pos, next_pos)):# lpiste li ldakhel wach clean
+				go_to(next_pos)
+		elif (case_pos >= 101 && next_pos > 108):# overflow
+			print("selectionnez une autre piece")
+	
 	if (Parent_node.is_in_group("V")):
-		if (next_pos > 68 && next_pos < 100):
+		if (case_pos >= 56 && next_pos <= 68 || case_pos >= 1 && next_pos <= 51):# mn bra l bra
+			if (from_to(case_pos, next_pos)):
+				go_to(next_pos)
+		elif (case_pos >= 56 && case_pos <= 68) && (next_pos > 68):# mn bra l bra // mn secteur dyalo lbra
 			next_pos -= 68
-		if (case_pos > 200 && next_pos > 208):
-			print("select another dice")
-		elif (next_pos > 51 && case_pos <= 51):
-			case_pos = 200 + next_pos - 51
-			if (from_to(case_pos, next_pos)):
-				go_to(case_pos)
-		else:
-			if (from_to(case_pos, next_pos)):
-				case_pos = next_pos
-				go_to(case_pos)
-		
+			if (from_to(case_pos, 68)):
+				if (from_to(0, next_pos)):
+					go_to(next_pos)
+		elif(case_pos <= 51 && next_pos > 51):# mn bra ldakhel
+			next_pos = 200 + next_pos - 51
+			if (from_to(case_pos, 51)):# lpiste li bra wach clean
+				if (from_to(200, next_pos)):# lpiste li ldakhel wach clean
+					go_to(next_pos)
+		elif (case_pos >= 201 && next_pos <= 208):# mn ldakhel l ldakhel
+			if (from_to(case_pos, next_pos)):# lpiste li ldakhel wach clean
+				go_to(next_pos)
+		elif (case_pos >= 201 && next_pos > 208):# overflow
+			print("selectionnez une autre piece")
+	
 	if (Parent_node.is_in_group("R")):
-		if (next_pos > 68 && next_pos < 100):
+		if (case_pos >= 39 && next_pos <= 68 || case_pos >= 1 && next_pos <= 34):# mn bra l bra
+			if (from_to(case_pos, next_pos)):
+				go_to(next_pos)
+		elif (case_pos >= 39 && case_pos <= 68) && (next_pos > 68):# mn bra l bra // mn secteur dyalo lbra
 			next_pos -= 68
-		if (case_pos > 300 && next_pos > 308):
-			print("select another dice")
-		elif (next_pos > 34 && case_pos <= 34):
-			case_pos = 300 + next_pos - 34
-			if (from_to(case_pos, next_pos)):
-				go_to(case_pos)
-		else:
-			if (from_to(case_pos, next_pos)):
-				case_pos = next_pos
-				go_to(case_pos)
-		
+			if (from_to(case_pos, 68)):
+				if (from_to(0, next_pos)):
+					go_to(next_pos)
+		elif(case_pos <= 34 && next_pos > 34):# mn bra ldakhel
+			next_pos = 300 + next_pos - 34
+			if (from_to(case_pos, 34)):# lpiste li bra wach clean
+				if (from_to(300, next_pos)):# lpiste li ldakhel wach clean
+					go_to(next_pos)
+		elif (case_pos >= 301 && next_pos <= 308):# mn ldakhel l ldakhel
+			if (from_to(case_pos, next_pos)):# lpiste li ldakhel wach clean
+				go_to(next_pos)
+		elif (case_pos >= 301 && next_pos > 308):# overflow
+			print("selectionnez une autre piece")
+	
 	if (Parent_node.is_in_group("B")):
-		if (next_pos > 68 && next_pos < 100):
+		if (case_pos >= 22 && next_pos <= 68 || case_pos >= 1 && next_pos <= 17):# mn bra l bra
+			if (from_to(case_pos, next_pos)):
+				go_to(next_pos)
+		elif (case_pos >= 22 && case_pos <= 68) && (next_pos > 68):# mn bra l bra // mn secteur dyalo lbra
 			next_pos -= 68
-		if (case_pos > 400 && next_pos > 408):
-			print("select another dice")
-		elif (next_pos > 17 && case_pos <= 17):
-			case_pos = 400 + next_pos - 17
-			if (from_to(case_pos, next_pos)):
-				go_to(case_pos)
-		else:
-			if (from_to(case_pos, next_pos)):
-				case_pos = next_pos
-				go_to(case_pos)
+			if (from_to(case_pos, 68)):
+				if (from_to(0, next_pos)):
+					go_to(next_pos)
+		elif(case_pos <= 17 && next_pos > 17):# mn bra ldakhel
+			next_pos = 400 + next_pos - 17
+			if (from_to(case_pos, 17)):# lpiste li bra wach clean
+				if (from_to(400, next_pos)):# lpiste li ldakhel wach clean
+					go_to(next_pos)
+		elif (case_pos >= 401 && next_pos <= 408):# mn ldakhel l ldakhel
+			if (from_to(case_pos, next_pos)):# lpiste li ldakhel wach clean
+				go_to(next_pos)
+		elif (case_pos >= 401 && next_pos > 408):# overflow
+			print("selectionnez une autre piece")
+		
+	
+#	if (Parent_node.is_in_group("J")):
+#		if (case_pos > 100 && next_pos > 108):
+#			print("case_pos : ", case_pos)
+#			print("next_pos : ", next_pos)
+#			print("select another dice")
+#		elif (next_pos > 68 && case_pos <= 68):
+#			case_pos = 100 + next_pos - 68
+#			if (from_to(case_pos, 68)):
+#				if (from_to(100, case_pos)):
+#					go_to(case_pos)
+#		else:
+#			if (from_to(case_pos, next_pos)):
+#				case_pos = next_pos
+#				go_to(case_pos)
+#
+#	if (Parent_node.is_in_group("V")):
+#		if (next_pos > 68 && next_pos < 100):
+#			next_pos -= 68
+#		if (case_pos > 200 && next_pos > 208):
+#			print("select another dice")
+#		elif (next_pos > 51 && case_pos <= 51):
+#			if (from_to(case_pos, 51)):
+#				if (from_to(200, case_pos)):
+#					go_to(case_pos)
+#		else:
+#			if (from_to(case_pos, next_pos)):
+#				case_pos = next_pos
+#				go_to(case_pos)
+#
+#	if (Parent_node.is_in_group("R")):
+#		if (next_pos > 68 && next_pos < 100):
+#			next_pos -= 68
+#		if (case_pos > 300 && next_pos > 308):
+#			print("select another dice")
+#		elif (next_pos > 34 && case_pos <= 34):
+#			if (from_to(case_pos, 34)):
+#				case_pos = 300 + 34 - case_pos
+#				if (from_to(300, case_pos)):
+#					go_to(case_pos)
+#		else:
+#			if (from_to(case_pos, next_pos)):
+#				case_pos = next_pos
+#				go_to(case_pos)
+#
+#	if (Parent_node.is_in_group("B")):
+#		if (next_pos > 68 && next_pos < 100):
+#			next_pos -= 68
+#		if (case_pos > 400 && next_pos > 408):
+#			print("select another dice")
+#		elif (next_pos > 17 && case_pos <= 17):
+#			if (from_to(case_pos, 17)):
+#				if (from_to(400, case_pos)):
+#					go_to(case_pos)
+#		else:
+#			if (from_to(case_pos, next_pos)):
+#				case_pos = next_pos
+#				go_to(case_pos)
 
 func kill(var target):
 	BaseData.base_data["Base_" + BaseData.piece_info[str(int(target[1])-1)]]["Pos" + target[1]]["val"] = 1
@@ -170,6 +261,6 @@ func _on_Player_input_event(viewport, event, shape_idx):
 		if (in_base):
 			depart()
 		else:
-			avancer(6)
+			avancer(1)
 	elif Input.is_action_just_pressed("test_click"):
 		print("case_pos /// ", case_pos)
