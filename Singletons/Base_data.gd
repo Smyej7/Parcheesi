@@ -1,7 +1,6 @@
 extends Node
 
 var base_data = {}
-var piece_info = ["J", "V", "R", "B"]
 
 func _ready():
 	var base_data_file = File.new()
