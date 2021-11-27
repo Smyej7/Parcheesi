@@ -37,7 +37,7 @@ var safezone = { "J" : [101, 102, 103, 104, 105, 106, 107, 108],
 				 "B" : [401, 402, 403, 404, 405, 406, 407, 408]}
 
 var current_player
-var players_list = ["J", "V", "R", "B"]
+var players_list = ["J", "B", "R", "V"]
 var go_value
 var which_button
 var safe_cases = [5, 12, 17, 22, 29, 34, 39, 46, 51, 56, 63, 68]
@@ -97,7 +97,7 @@ func tour_suiv():
 	
 	which_button = 0
 	print(current_player + " |" + str(rand1) + "| |" + str(rand2) + "|" + " bloqué -> " + str(jr_bloque(rand1, rand2)))
-	print("tour suiv")
+	print("----------------------------------- tour suiv -----------------------------------")
 	get_node("Players").get_node(current_player).set_nbr_doubles(0)
 	get_node("Players").get_node(current_player).set_last_move("", 0)
 	activ_pickable()
@@ -133,7 +133,7 @@ func premier_base_elem():
 			return i
 
 func from_to(var from,to):
-	print("from : " + str(from) + " to : " + str(to))
+#	print("from : " + str(from) + " to : " + str(to))
 	var Item1
 	var Item2
 	for i in range(from+1, to+1):
@@ -157,14 +157,14 @@ func jr_bloque(var rnd1, var rnd2) -> bool:
 		
 		if(!get_node("Players").get_node(current_player).get_node(current_player + str(i)).in_base): # check pr tt les jrs not in base
 			if (!D1.disabled):
-				if (tmp_case_pos + rnd1 > 68):
+				if (tmp_case_pos <= 68 && tmp_case_pos + rnd1 > 68):
 					if (from_to(tmp_case_pos, 68) && from_to(0, (tmp_case_pos+rnd1)-68)):
 						return false
 				else:
 					if (from_to(tmp_case_pos, tmp_case_pos + rnd1)):
 						return false
 			if (!D2.disabled):
-				if (tmp_case_pos + rnd2 > 68):
+				if (tmp_case_pos <= 68 && tmp_case_pos + rnd2 > 68):
 					if (from_to(tmp_case_pos, 68) && from_to(0, (tmp_case_pos+rnd2)-68)):
 						return false
 				else:
@@ -173,8 +173,11 @@ func jr_bloque(var rnd1, var rnd2) -> bool:
 		else:																						# check pr tt les jrs in base
 			if ((rnd1 + rnd2) == 5):
 				tmp_p_dep = get_node("Players").get_node(current_player).point_dep
-				if (CaseData.case_data["Case" + str(tmp_p_dep)]["Item1"] == "0" || CaseData.case_data["Case" + str(tmp_p_dep)]["Item2"] == "0"):
+				if (get_node("Players").get_node(current_player).get_node(current_player + str(i)).depart()):
 					return false
+	if (go_value == 20):
+		print("joueur bloque go_value -> 0")
+		set_go_value(0)
 	return true
 
 var b = true
@@ -191,6 +194,8 @@ func rnd():
 		rand2 = randi() % 6 + 1
 	b = false
 	
+	print("rand1 : " + str(rand1))
+	print("rand2 : " + str(rand2))
 #	rand1 = 5
 #	rand2 = 5
 	
@@ -210,8 +215,9 @@ func rnd():
 					tour_suiv()
 		else:
 			if (base_pleine() && rand1 != 5):
-				tour_suiv() # relancer()
-			if (rand1 == 5):# rand1 == rand2
+#				tour_suiv()
+				relancer()
+			elif (rand1 == 5):# rand1 == rand2
 				if (CaseData.case_data["Case" + str(dep)]["Item1"] == "0"):
 					if (!base_vide()):
 						get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
@@ -225,13 +231,18 @@ func rnd():
 				elif (CaseData.case_data["Case" + str(dep)]["Item2"] == "0"):
 					if (!base_vide()):
 						get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
+						D1.disabled = true
+						print("D1 disabled // hadi dyal 5 5")
 	elif ((rand1 + rand2) == 5):
 		if (!base_vide()):
 			
 			if (CaseData.case_data["Case" + str(dep)]["Item1"][0] != "0" && CaseData.case_data["Case" + str(dep)]["Item2"][0] != "0"): # les 2 nn vides
 				if (!(CaseData.case_data["Case" + str(dep)]["Item1"][0] == current_player && CaseData.case_data["Case" + str(dep)]["Item2"][0] == current_player)): # 1 ennemi minimum
+					D1.disabled = true
+					D2.disabled = true
 					if (CaseData.case_data["Case" + str(dep)]["Item2"][0] != current_player):
 						kill(CaseData.case_data["Case" + str(dep)]["Item2"], dep)
+						set_go_value(20)
 						get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
 #						CaseData.case_data["Case" + str(dep)]["Item2"] = current_player + str(premier_base_elem())
 #						var x0 = CaseData.case_data["Case" + str(dep)]["x"]
@@ -239,6 +250,7 @@ func rnd():
 #						get_node("Players").get_node(current_player + str(premier_base_elem())).position = Vector2(x0, y0)
 					else:
 						kill(CaseData.case_data["Case" + str(dep)]["Item1"], dep)
+						set_go_value(20)
 						get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
 #						CaseData.case_data["Case" + str(dep)]["Item1"] = current_player + str(premier_base_elem())
 #						var x0 = CaseData.case_data["Case" + str(dep)]["x"]
@@ -250,19 +262,19 @@ func rnd():
 				tour_suiv()
 			else:
 				print("here!")
-	elif (!base_vide() && rand1 == 5 || rand2 == 5):
-		get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
-		if (rand1 == 5):
-			print("d1 desactivee")
-			D1.disabled = true
-			
-		else:
-			print("d2 desactivee")
-			D2.disabled = true
+	elif (!base_vide() && (rand1 == 5 || rand2 == 5)):
+		if (get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()):
+			if (rand1 == 5):
+				print("d1 desactivee")
+				D1.disabled = true
+			else:
+				print("d2 desactivee")
+				D2.disabled = true
 	elif (base_pleine() && rand1 != 5 && rand2 != 5):
 		tour_suiv()
 
 func relancer():
+	print("relancer")
 	rnd()
 
 func kill(var victime, var pos):
@@ -328,8 +340,8 @@ func _on_test_button_pressed():
 	print("Base R : " + str(BaseData.base_data["Base_R"]["Pos1"]["val"]) + " " + str(BaseData.base_data["Base_R"]["Pos2"]["val"]) + " " + str(BaseData.base_data["Base_R"]["Pos3"]["val"]) + " " + str(BaseData.base_data["Base_R"]["Pos4"]["val"]))
 	print("Base B : " + str(BaseData.base_data["Base_B"]["Pos1"]["val"]) + " " + str(BaseData.base_data["Base_B"]["Pos2"]["val"]) + " " + str(BaseData.base_data["Base_B"]["Pos3"]["val"]) + " " + str(BaseData.base_data["Base_B"]["Pos4"]["val"]))
 	print("----------------")
-	print("Item 1 : " + CaseData.case_data["Case39"]["Item1"])
-	print("Item 2 : " + CaseData.case_data["Case39"]["Item2"])
+	print("Item 1 : " + CaseData.case_data["Case56"]["Item1"])
+	print("Item 2 : " + CaseData.case_data["Case56"]["Item2"])
 	print(get_node("Players/B/B3").in_base)
 
 func D1_is_disabled() -> bool:

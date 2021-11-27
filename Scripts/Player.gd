@@ -42,6 +42,7 @@ func _ready():
 
 var go_to2 = false
 func qd():
+	print(self.name + " sorti")
 	case_pos = p_dep
 	c_pos = case_pos
 	go_to2 = true
@@ -96,7 +97,6 @@ func go_to(pos_):
 	if (!go_to2):
 		Game_node.set_go_value(0)
 	go_to2 = false
-	print("pos_ : ", pos_)
 	case_pos = pos_
 	var temp_name
 	#supprimer la val depuis la case precedente
@@ -354,13 +354,15 @@ func _on_Player_input_event(viewport, event, shape_idx):
 					desac_button()
 		elif(Game_node.go_value != 0):
 			var test = avancer(Game_node.go_value)
-			print("go_value // ", Game_node.go_value)
+#			print("go_value // ", Game_node.go_value)
 			if (test):
 				if (Game_node.go_value != 20):
 					Game_node.go_value = 0
 				desac_button()
-			print("test // ", test)
+#			print("test // ", test)
 		#tour suiv ou pas
+#		if (Game_node.jr_bloque(Game_node.rand1, Game_node.rand2)):
+			
 		if((Game_node.rand1 == Game_node.rand2) && Game_node.get_go_value() != 20 && Game_node.D1_is_disabled() && Game_node.D2_is_disabled()):
 			Game_node.D1.disabled = false
 			Game_node.D2.disabled = false
