@@ -45,8 +45,8 @@ var safe_cases = [5, 12, 17, 22, 29, 34, 39, 46, 51, 56, 63, 68]
 
 var x
 var y
-var rand1
-var rand2
+var rand1 = -1
+var rand2 = -1
 
 var game_over
 var old
@@ -65,6 +65,7 @@ func _ready():
 	game_over = false
 	instance_texture_players()
 	start()
+
 
 #func _ready():
 #	var tmp_last_move = ["jk", 12]
@@ -90,7 +91,12 @@ func start():
 	tour_suiv()
 
 func tour_suiv():
+	
+	D1.disabled = false
+	D2.disabled = false
+	
 	which_button = 0
+	print(current_player + " |" + str(rand1) + "| |" + str(rand2) + "|" + " bloqué -> " + str(jr_bloque(rand1, rand2)))
 	print("tour suiv")
 	get_node("Players").get_node(current_player).set_nbr_doubles(0)
 	get_node("Players").get_node(current_player).set_last_move("", 0)
@@ -101,10 +107,13 @@ func tour_suiv():
 	current_player = players_list[old]
 	desac_pickable()
 	
+	
 	rnd()
 	
-	D1.disabled = false
-	D2.disabled = false
+#	if (D1_is_disabled() && D2_is_disabled()):
+#		print("che3loo")
+#		D1.disabled = false
+#		D2.disabled = false
 
 func base_pleine() -> bool:
 	for i in range(1, 5):
@@ -112,14 +121,78 @@ func base_pleine() -> bool:
 			return false
 	return true
 
+func base_vide() -> bool:
+	for i in range(1, 5):
+		if (BaseData.base_data["Base_" + current_player]["Pos" + str(i)]["val"] == 1):
+			return false
+	return true
+	
+func premier_base_elem():
+	for i in range(1, 5):
+		if (BaseData.base_data["Base_" + current_player]["Pos" + str(i)]["val"] == 1):
+			return i
 
+func from_to(var from,to):
+	print("from : " + str(from) + " to : " + str(to))
+	var Item1
+	var Item2
+	for i in range(from+1, to+1):
+		Item1 = CaseData.case_data["Case" + str(i)]["Item1"]
+		Item2 = CaseData.case_data["Case" + str(i)]["Item2"]
+		if ( Item1 != "0" &&  Item2 != "0"):
+			print("a cause de la case ", i)
+			print("from to false hh")
+			return false
+	
+	return true
+
+func jr_bloque(var rnd1, var rnd2) -> bool:
+	
+	var tmp_case_pos
+	var tmp_p_dep
+	
+	
+	for i in range(1, 5):
+		tmp_case_pos = get_node("Players").get_node(current_player).get_node(current_player + str(i)).get_case_pos()
+		
+		if(!get_node("Players").get_node(current_player).get_node(current_player + str(i)).in_base): # check pr tt les jrs not in base
+			if (!D1.disabled):
+				if (tmp_case_pos + rnd1 > 68):
+					if (from_to(tmp_case_pos, 68) && from_to(0, (tmp_case_pos+rnd1)-68)):
+						return false
+				else:
+					if (from_to(tmp_case_pos, tmp_case_pos + rnd1)):
+						return false
+			if (!D2.disabled):
+				if (tmp_case_pos + rnd2 > 68):
+					if (from_to(tmp_case_pos, 68) && from_to(0, (tmp_case_pos+rnd2)-68)):
+						return false
+				else:
+					if (from_to(tmp_case_pos, tmp_case_pos + rnd2)):
+						return false
+		else:																						# check pr tt les jrs in base
+			if ((rnd1 + rnd2) == 5):
+				tmp_p_dep = get_node("Players").get_node(current_player).point_dep
+				if (CaseData.case_data["Case" + str(tmp_p_dep)]["Item1"] == "0" || CaseData.case_data["Case" + str(tmp_p_dep)]["Item2"] == "0"):
+					return false
+	return true
+
+var b = true
 func rnd():
 	var tmp_nbr_doubles
 	var tmp_last_move
-#	rand1 = randi() % 6 + 1
-#	rand2 = randi() % 6 + 1
-	rand1 = 5
-	rand2 = 5
+	var dep = get_node("Players").get_node(current_player).point_dep
+	
+	if (b):
+		rand1 = 3
+		rand2 = 2
+	else:
+		rand1 = randi() % 6 + 1
+		rand2 = randi() % 6 + 1
+	b = false
+	
+#	rand1 = 5
+#	rand2 = 5
 	
 	dice_texture(rand1, rand2)
 	
@@ -133,12 +206,81 @@ func rnd():
 				if (safezone[tmp_last_move[0][0]].has(tmp_last_move[1])):# protege
 					tour_suiv()
 				else:
-					get_node("Players").get_node(current_player).kill(tmp_last_move[0], tmp_last_move[1])
+					kill(tmp_last_move[0], tmp_last_move[1])
 					tour_suiv()
-	
+		else:
+			if (base_pleine() && rand1 != 5):
+				tour_suiv() # relancer()
+			if (rand1 == 5):# rand1 == rand2
+				if (CaseData.case_data["Case" + str(dep)]["Item1"] == "0"):
+					if (!base_vide()):
+						get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
+						D1.disabled = true
+						print("D1 disabled // hadi dyal 5 5")
+					if (!base_vide()):
+						get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
+						D2.disabled = true
+						print("D2 disabled // hadi dyal 5 5")
+						relancer()
+				elif (CaseData.case_data["Case" + str(dep)]["Item2"] == "0"):
+					if (!base_vide()):
+						get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
+	elif ((rand1 + rand2) == 5):
+		if (!base_vide()):
+			
+			if (CaseData.case_data["Case" + str(dep)]["Item1"][0] != "0" && CaseData.case_data["Case" + str(dep)]["Item2"][0] != "0"): # les 2 nn vides
+				if (!(CaseData.case_data["Case" + str(dep)]["Item1"][0] == current_player && CaseData.case_data["Case" + str(dep)]["Item2"][0] == current_player)): # 1 ennemi minimum
+					if (CaseData.case_data["Case" + str(dep)]["Item2"][0] != current_player):
+						kill(CaseData.case_data["Case" + str(dep)]["Item2"], dep)
+						get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
+#						CaseData.case_data["Case" + str(dep)]["Item2"] = current_player + str(premier_base_elem())
+#						var x0 = CaseData.case_data["Case" + str(dep)]["x"]
+#						var y0 = CaseData.case_data["Case" + str(dep)]["y"]
+#						get_node("Players").get_node(current_player + str(premier_base_elem())).position = Vector2(x0, y0)
+					else:
+						kill(CaseData.case_data["Case" + str(dep)]["Item1"], dep)
+						get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
+#						CaseData.case_data["Case" + str(dep)]["Item1"] = current_player + str(premier_base_elem())
+#						var x0 = CaseData.case_data["Case" + str(dep)]["x"]
+#						var y0 = CaseData.case_data["Case" + str(dep)]["y"]
+#						get_node("Players").get_node(current_player + str(premier_base_elem())).position = Vector2(x0, y0)
+			elif (CaseData.case_data["Case" + str(dep)]["Item1"][0] == "0" || CaseData.case_data["Case" + str(dep)]["Item2"][0] == "0"): # soit 1 vide (la 2eme), soit les 2 vides
+				
+				get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
+				tour_suiv()
+			else:
+				print("here!")
+	elif (!base_vide() && rand1 == 5 || rand2 == 5):
+		get_node("Players").get_node(current_player).get_node(current_player + str(premier_base_elem())).depart()
+		if (rand1 == 5):
+			print("d1 desactivee")
+			D1.disabled = true
+			
+		else:
+			print("d2 desactivee")
+			D2.disabled = true
+	elif (base_pleine() && rand1 != 5 && rand2 != 5):
+		tour_suiv()
 
 func relancer():
 	rnd()
+
+func kill(var victime, var pos):
+	
+	print(victime + " /KILLED")
+	get_node("Players").get_node(victime[0]).get_node(victime).set_in_base(true)
+	BaseData.base_data["Base_" + victime[0]]["Pos" + victime[1]]["val"] = 1
+	var x0 = BaseData.base_data["Base_" + victime[0]]["Pos" + victime[1]]["x"]
+	var y0 = BaseData.base_data["Base_" + victime[0]]["Pos" + victime[1]]["y"]
+	get_node("Players").get_node(victime[0]).get_node(victime).position = Vector2(x0, y0)
+	
+	if (CaseData.case_data["Case" + str(pos)]["Item1"] == victime):
+		CaseData.case_data["Case" + str(pos)]["Item1"] = "0"
+	else:
+		CaseData.case_data["Case" + str(pos)]["Item2"] = "0"
+		var x = CaseData.case_data["Case" + str(pos)]["x"]
+		var y = CaseData.case_data["Case" + str(pos)]["y"]
+		get_node("Players").get_node(CaseData.case_data["Case" + str(pos)]["Item1"][0]).get_node(CaseData.case_data["Case" + str(pos)]["Item1"]).position = Vector2(x, y)
 
 func dice_texture(var t1, var t2):
 	x = DiceData.diece_data["Dice_" + current_player]["x1"]
@@ -186,8 +328,8 @@ func _on_test_button_pressed():
 	print("Base R : " + str(BaseData.base_data["Base_R"]["Pos1"]["val"]) + " " + str(BaseData.base_data["Base_R"]["Pos2"]["val"]) + " " + str(BaseData.base_data["Base_R"]["Pos3"]["val"]) + " " + str(BaseData.base_data["Base_R"]["Pos4"]["val"]))
 	print("Base B : " + str(BaseData.base_data["Base_B"]["Pos1"]["val"]) + " " + str(BaseData.base_data["Base_B"]["Pos2"]["val"]) + " " + str(BaseData.base_data["Base_B"]["Pos3"]["val"]) + " " + str(BaseData.base_data["Base_B"]["Pos4"]["val"]))
 	print("----------------")
-	print("Item 1 : " + CaseData.case_data["Case22"]["Item1"])
-	print("Item 2 : " + CaseData.case_data["Case22"]["Item2"])
+	print("Item 1 : " + CaseData.case_data["Case39"]["Item1"])
+	print("Item 2 : " + CaseData.case_data["Case39"]["Item2"])
 	print(get_node("Players/B/B3").in_base)
 
 func D1_is_disabled() -> bool:
@@ -206,14 +348,12 @@ func _on_D1_pressed():
 	if (go_value != 20):
 		go_value = rand1
 		which_button = 1
-		print("D1 pressed")
 
 
 func _on_D2_pressed():
 	if (go_value != 20):
 		go_value = rand2
 		which_button = 2
-		print("D2 pressed")
 
 
 func _on_hhh_pressed():

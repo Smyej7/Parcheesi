@@ -361,9 +361,11 @@ func _on_Player_input_event(viewport, event, shape_idx):
 				desac_button()
 			print("test // ", test)
 		#tour suiv ou pas
-	if((Game_node.rand1 == Game_node.rand2) && Game_node.get_go_value() != 20 && Game_node.D1_is_disabled() && Game_node.D2_is_disabled()):
-		Game_node.D1.disabled = false
-		Game_node.D2.disabled = false
-		Game_node.relancer()
-	elif ((Game_node.rand1 != Game_node.rand2) && Game_node.get_go_value() != 20 && Game_node.D1_is_disabled() && Game_node.D2_is_disabled()):
-		Game_node.tour_suiv()
+		if((Game_node.rand1 == Game_node.rand2) && Game_node.get_go_value() != 20 && Game_node.D1_is_disabled() && Game_node.D2_is_disabled()):
+			Game_node.D1.disabled = false
+			Game_node.D2.disabled = false
+			Game_node.relancer()
+		elif ((Game_node.rand1 != Game_node.rand2) && Game_node.get_go_value() != 20 && Game_node.D1_is_disabled() && Game_node.D2_is_disabled()):
+			Game_node.tour_suiv()
+		if (Game_node.jr_bloque(Game_node.rand1, Game_node.rand2) && Game_node.get_go_value() != 20):
+			Game_node.tour_suiv()
