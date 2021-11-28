@@ -343,6 +343,22 @@ func desac_button():
 	elif(Game_node.which_button == 2):
 		Game_node.get_node("Dices/D2").set_disabled(true)
 
+func in_tapis_rouge() -> bool:
+	
+	if (Parent_node.is_in_group("J")):
+		if (case_pos >= 101 && case_pos <= 108):
+			return true
+	elif (Parent_node.is_in_group("V")):
+		if (case_pos >= 201 && case_pos <= 208):
+			return true
+	elif (Parent_node.is_in_group("R")):
+		if (case_pos >= 301 && case_pos <= 308):
+			return true
+	elif (Parent_node.is_in_group("B")):
+		if (case_pos >= 401 && case_pos <= 408):
+			return true
+	return false
+
 func _on_Player_input_event(viewport, event, shape_idx):
 	if Input.is_action_just_pressed("click_"):
 		if (in_base):
@@ -361,13 +377,31 @@ func _on_Player_input_event(viewport, event, shape_idx):
 				desac_button()
 #			print("test // ", test)
 		#tour suiv ou pas
-#		if (Game_node.jr_bloque(Game_node.rand1, Game_node.rand2)):
+		if (Game_node.go_value == 20 && !Game_node.can_ply_20() && (!Game_node.D1_is_disabled() || !Game_node.D2_is_disabled())):
+			print("if 1")
+			Game_node.set_go_value(0)
 			
-		if((Game_node.rand1 == Game_node.rand2) && Game_node.get_go_value() != 20 && Game_node.D1_is_disabled() && Game_node.D2_is_disabled()):
+		elif (Game_node.go_value == 20 && !Game_node.can_ply_20() && Game_node.D1_is_disabled() && Game_node.D2_is_disabled()):
+			print("if 2")
+			Game_node.set_go_value(0)
+			if (Game_node.rand1 == Game_node.rand2):
+				Game_node.relancer()
+			else:
+				Game_node.tour_suiv()
+			
+		elif((Game_node.rand1 == Game_node.rand2) && Game_node.get_go_value() != 20 && Game_node.D1_is_disabled() && Game_node.D2_is_disabled()):
+			print("if 3")
 			Game_node.D1.disabled = false
 			Game_node.D2.disabled = false
 			Game_node.relancer()
 		elif ((Game_node.rand1 != Game_node.rand2) && Game_node.get_go_value() != 20 && Game_node.D1_is_disabled() && Game_node.D2_is_disabled()):
+			print("if 4")
 			Game_node.tour_suiv()
-		if (Game_node.jr_bloque(Game_node.rand1, Game_node.rand2) && Game_node.get_go_value() != 20):
+		elif ((Game_node.rand1 == Game_node.rand2) && Game_node.jr_bloque(Game_node.rand1, Game_node.rand2) && Game_node.get_go_value() != 20):
+			print("if 5")
+			Game_node.D1.disabled = false
+			Game_node.D2.disabled = false
+			Game_node.relancer()
+		elif (Game_node.jr_bloque(Game_node.rand1, Game_node.rand2) && Game_node.get_go_value() != 20):
+			print("if 6")
 			Game_node.tour_suiv()

@@ -133,7 +133,7 @@ func premier_base_elem():
 			return i
 
 func from_to(var from,to):
-#	print("from : " + str(from) + " to : " + str(to))
+	print("from : " + str(from) + " to : " + str(to))
 	var Item1
 	var Item2
 	for i in range(from+1, to+1):
@@ -160,16 +160,28 @@ func jr_bloque(var rnd1, var rnd2) -> bool:
 				if (tmp_case_pos <= 68 && tmp_case_pos + rnd1 > 68):
 					if (from_to(tmp_case_pos, 68) && from_to(0, (tmp_case_pos+rnd1)-68)):
 						return false
-				else:
+				elif (!get_node("Players").get_node(current_player).get_node(current_player + str(i)).in_tapis_rouge()):
 					if (from_to(tmp_case_pos, tmp_case_pos + rnd1)):
 						return false
+				else: # kayn f tapis rouge
+					if (!(tmp_case_pos + rnd1 > get_node("Players").get_node(current_player).MAX)):
+						if (from_to(tmp_case_pos, tmp_case_pos + rnd1)):
+							return false
 			if (!D2.disabled):
 				if (tmp_case_pos <= 68 && tmp_case_pos + rnd2 > 68):
 					if (from_to(tmp_case_pos, 68) && from_to(0, (tmp_case_pos+rnd2)-68)):
 						return false
-				else:
+				elif (!get_node("Players").get_node(current_player).get_node(current_player + str(i)).in_tapis_rouge()):
 					if (from_to(tmp_case_pos, tmp_case_pos + rnd2)):
 						return false
+				else: # kayn f tapis rouge
+					if (!(tmp_case_pos + rnd2 > get_node("Players").get_node(current_player).MAX)):
+						if (from_to(tmp_case_pos, tmp_case_pos + rnd2)):
+							return false
+			if (go_value == 20):
+				if (can_ply_20()):
+					return false
+				return true
 		else:																						# check pr tt les jrs in base
 			if ((rnd1 + rnd2) == 5):
 				tmp_p_dep = get_node("Players").get_node(current_player).point_dep
@@ -180,27 +192,44 @@ func jr_bloque(var rnd1, var rnd2) -> bool:
 		set_go_value(0)
 	return true
 
-var b = true
+
+func can_ply_20() -> bool:
+	var tmp_case_pos
+	
+	for i in range(1, 5):
+		tmp_case_pos = get_node("Players").get_node(current_player).get_node(current_player + str(i)).get_case_pos()
+		if(!get_node("Players").get_node(current_player).get_node(current_player + str(i)).in_base && !get_node("Players").get_node(current_player).get_node(current_player + str(i)).in_tapis_rouge()):
+			if (tmp_case_pos <= 68 && tmp_case_pos + 20 > 68):
+				if (from_to(tmp_case_pos, 68) && from_to(0, (tmp_case_pos + 20)-68)):
+					return true
+			else:
+				if (from_to(tmp_case_pos, tmp_case_pos + 20)):
+					return true
+	return false
+
+#var b = true
 func rnd():
 	var tmp_nbr_doubles
 	var tmp_last_move
 	var dep = get_node("Players").get_node(current_player).point_dep
 	
-	if (b):
-		rand1 = 3
-		rand2 = 2
-	else:
-		rand1 = randi() % 6 + 1
-		rand2 = randi() % 6 + 1
-	b = false
+#	if (b):
+#		rand1 = 5
+#		rand2 = 5
+#	else:
+#		rand1 = randi() % 6 + 1
+#		rand2 = randi() % 6 + 1
+#	b = false
+	
+	rand1 = randi() % 6 + 1
+	rand2 = randi() % 6 + 1
 	
 	print("rand1 : " + str(rand1))
 	print("rand2 : " + str(rand2))
-#	rand1 = 5
-#	rand2 = 5
 	
 	dice_texture(rand1, rand2)
 	
+#	print("can_ply_20() : " + str(can_ply_20()))
 	
 	if (rand1 == rand2):
 		tmp_nbr_doubles = get_node("Players").get_node(current_player).get_nbr_doubles()
@@ -275,6 +304,8 @@ func rnd():
 
 func relancer():
 	print("relancer")
+	D1.disabled = false
+	D2.disabled = false
 	rnd()
 
 func kill(var victime, var pos):

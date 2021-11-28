@@ -5,6 +5,7 @@ var color = "R"
 var point_dep = 39
 var last_move = ["", 0]
 var nbr_doubles
+var MAX = 308
 
 
 func set_nbr_doubles(var value):
