@@ -365,15 +365,6 @@ func instance_texture_players():
 #		print(J.position.x)
 #		#a += 23.2
 
-func _on_test_button_pressed():
-	print("Base J : " + str(BaseData.base_data["Base_J"]["Pos1"]["val"]) + " " + str(BaseData.base_data["Base_J"]["Pos2"]["val"]) + " " + str(BaseData.base_data["Base_J"]["Pos3"]["val"]) + " " + str(BaseData.base_data["Base_J"]["Pos4"]["val"]))
-	print("Base V : " + str(BaseData.base_data["Base_V"]["Pos1"]["val"]) + " " + str(BaseData.base_data["Base_V"]["Pos2"]["val"]) + " " + str(BaseData.base_data["Base_V"]["Pos3"]["val"]) + " " + str(BaseData.base_data["Base_V"]["Pos4"]["val"]))
-	print("Base R : " + str(BaseData.base_data["Base_R"]["Pos1"]["val"]) + " " + str(BaseData.base_data["Base_R"]["Pos2"]["val"]) + " " + str(BaseData.base_data["Base_R"]["Pos3"]["val"]) + " " + str(BaseData.base_data["Base_R"]["Pos4"]["val"]))
-	print("Base B : " + str(BaseData.base_data["Base_B"]["Pos1"]["val"]) + " " + str(BaseData.base_data["Base_B"]["Pos2"]["val"]) + " " + str(BaseData.base_data["Base_B"]["Pos3"]["val"]) + " " + str(BaseData.base_data["Base_B"]["Pos4"]["val"]))
-	print("----------------")
-	print("Item 1 : " + CaseData.case_data["Case56"]["Item1"])
-	print("Item 2 : " + CaseData.case_data["Case56"]["Item2"])
-	print(get_node("Players/B/B3").in_base)
 
 func D1_is_disabled() -> bool:
 	if (D1.disabled):
@@ -397,11 +388,6 @@ func _on_D2_pressed():
 	if (go_value != 20):
 		go_value = rand2
 		which_button = 2
-
-
-func _on_hhh_pressed():
-	print(go_value)
-	go_value = 5
 
 func _on_AcceptDialog_confirmed():
 	get_tree().quit()
